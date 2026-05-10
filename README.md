@@ -1,8 +1,9 @@
-# isaac-sim-git
-isaac-sim sample code and document
+# vision-system-git
+  - isaac-sim sample code and document
+  - ZED camera test 
 
 
-## docker 실행
+## isaac-sim docker 실행
 ```bash
 docker run --name isaac-sim --entrypoint bash -it --gpus all -e "ACCEPT_EULA=Y" --rm --network=host \
     --user $(id -u):$(id -g) \
