@@ -26,15 +26,15 @@ docker run --name isaac-sim --entrypoint bash -it --gpus all -e "ACCEPT_EULA=Y" 
 ```
 
 ## 환경 구성 확인
-python3.10 가상환경 구성
-cd lecture-coordinate-validation/
-python3.10 validate_stage4.py
-확인
-cd lecture-yolo-segmentation/
-. run_training.sh
-확인
+python3.10 가상환경 구성  
+cd lecture-coordinate-validation/  
+python3.10 validate_stage4.py  
+확인  
+cd lecture-yolo-segmentation/  
+. run_training.sh  
+
 ## 예제실행
-cd lecture-standalone
+cd lecture-standalone  
 . ~/isaac-sim/python.sh lecture_01_basic_environment.py
 
 
