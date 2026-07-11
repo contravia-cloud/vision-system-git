@@ -1,49 +1,57 @@
-# vision-system-git
-  - isaac-sim sample code and document
-  - ZED camera test 
 
 
-## isaac-sim docker 실행
-```bash
-docker run --name isaac-sim --entrypoint bash -it --gpus all -e "ACCEPT_EULA=Y" --rm --network=host \
-    --user $(id -u):$(id -g) \
-    -e "PRIVACY_CONSENT=Y" \
-    -v $HOME/.Xauthority:/isaac-sim/.Xauthority \
-    -e DISPLAY \
-    -v ~/docker/isaac-sim/cache/main:/isaac-sim/.cache:rw \
-    -v ~/docker/isaac-sim/cache/computecache:/isaac-sim/.nv/ComputeCache:rw \
-    -v ~/docker/isaac-sim/logs:/isaac-sim/.nvidia-omniverse/logs:rw \
-    -v ~/docker/isaac-sim/config:/isaac-sim/.nvidia-omniverse/config:rw \
-    -v ~/docker/isaac-sim/data:/isaac-sim/.local/share/ov/data:rw \
-    -v ~/docker/isaac-sim/pkg:/isaac-sim/.local/share/ov/pkg:rw \
-    -u 1234:1234 \
-    nvcr.io/nvidia/isaac-sim:5.1.0
-```
-
-## isaacsim-webrtc-streaming-client 실행
-```bash
-./isaacsim-webrtc-streaming-client-1.1.5-linux-x64.AppImage --no-sandbox
-```
-
-## 환경 구성 확인
-python3.10 가상환경 구성  
-cd lecture-coordinate-validation/  
-python3.10 validate_stage4.py  
-확인  
-cd lecture-yolo-segmentation/  
-. run_training.sh  
-
-## 예제실행
-cd lecture-standalone  
-. ~/isaac-sim/python.sh lecture_01_basic_environment.py
-
-
-
-## 용어 정리
-  - ONNX(Open Neural Network Exchange), 온닉스
-    PyTorch, TensorFlow 등 다양한 머신러닝/딥러닝 프레임워크 간에 모델을 자유롭게 교환하고 사용할 수 있도록 만들어진 개방형 표준 파일 포맷
-  - TensorRT
-    NVIDIA가 만든 딥러닝 모델 추론(Inference) 가속화 라이브러리입니다. 쉽게 말해, 이미 학습이 완료된 인공지능 모델을 NVIDIA GPU에서 가장 빠르고 효율적으로 실행할 수 있도록 '재구성'해주는 최적화 엔진
+# ONNX(Open Neural Network Exchange), 온닉스  
+    > PyTorch, TensorFlow 등 다양한 머신러닝/딥러닝 프레임워크 간에 모델을 자유롭게 교환하고 사용할 수 있도록 만들어진 개방형 표준 파일 포맷
+# TensorRT  
+    >NVIDIA가 만든 딥러닝 모델 추론(Inference) 가속화 라이브러리입니다.  
+    쉽게 말해, 이미 학습이 완료된 인공지능 모델을 NVIDIA GPU에서 가장 빠르고 효율적으로 실행할 수 있도록 '재구성'해주는 최적화 엔진
     보통은 'PyTorch 모델 \(\rightarrow \) ONNX 변환 \(\rightarrow \) TensorRT 최적화'의 과정을 거칩
 
 
+# 오차와 노이즈의 차이
+
+**오차(Error)**와 **노이즈(Noise)**는 데이터 분석, 과학, 공학에서 자주 혼용되지만, 개념적으로 명확한 차이가 있습니다. 아주 쉽게 비유하자면 오차는 **'목표물에서 얼마나 벗어났는가'**의 문제이고, 노이즈는 **'주변이 얼마나 시끄럽고 산만한가'**의 문제입니다.
+
+---
+
+## 1. 한눈에 보는 핵심 차이
+
+| 구분 | 오차 (Error) | 노이즈 (Noise) |
+| :--- | :--- | :--- |
+| **정의** | **참값(True value)**과 **측정값**의 차이 | 데이터에 섞여 들어간 **불필요하고 무작위적인 신호/방해 요소** |
+| **성격** | 결과론적이고 수학적인 **'값'** (계산 가능) | 데이터의 품질을 떨어뜨리는 **'현상'** 또는 **'방해 신호'** |
+| **원인** | 잘못된 계산, 장비 결함, 환경적 요인 등 | 통제할 수 없는 무작위적 변동, 배경 간섭 등 |
+| **수식적 관점** | $오차 = 측정값 - 참값$ | $측정 데이터 = 실제 신호(Signal) + 노이즈(Noise)$ |
+
+---
+
+## 2. 오차 (Error)의 특징
+
+오차는 언제나 **기준이 되는 '참값'**이 존재할 때 성립합니다. 내가 과녁의 정중앙(참값)을 맞추려고 했는데, 화살이 오른쪽으로 2cm 벗어났다면 그 2cm가 바로 오차입니다.
+
+오차는 원인에 따라 크게 두 가지로 나뉩니다.
+
+*   **계통오차 (Systematic Error):** 측정 기기의 결함이나 잘못된 실험 설계로 인해 **일정한 방향성**을 가지고 반복해서 발생하는 오차입니다. (예: 영점이 맞지 않아 항상 5g 더 무겁게 재지는 저울). 원인을 알면 **제거가 가능**합니다.
+*   **우연오차 (Random Error):** 통제할 수 없는 미세한 환경 변화로 인해 **무작위로** 발생하는 오차입니다. (예: 미세한 바람 때문에 저울 수치가 계속 조금씩 변함). 여러 번 측정해서 평균을 내면 줄일 수 있습니다.
+
+---
+
+## 3. 노이즈 (Noise)의 특징
+
+노이즈는 내가 관찰하고자 하는 **'실제 신호(Signal)'를 방해하는 원치 않는 모든 잡음**을 뜻합니다. 참값이 무엇인지 모르는 상태에서도 데이터 자체에 섞여 있을 수 있습니다.
+
+*   **대표적인 예시:**
+    *   오디오 녹음 중 뒤에 깔리는 "쉬이이-" 하는 백색소음
+    *   어두운 곳에서 사진을 찍었을 때 화면이 자글자글하게 깨지는 현상
+    *   주식 차트가 큰 흐름(추세) 속에서 매일매일 자잘하게 오르내리는 변동성
+*   **특징:** 노이즈는 대개 완전히 제거하기 어렵기 때문에, 필터링(Filtering)이나 smoothing 기법을 통해 **최대한 억제**하여 원래의 신호를 찾아내는 방식으로 처리합니다.
+
+---
+
+## 4. 요약하자면
+
+*   **오차**는 내가 구한 답이 틀린 **'양(Amount)'**에 초점을 맞춥니다. 정확도의 지표입니다.
+*   **노이즈**는 내가 보려는 데이터에 섞인 **'불순물(Impurity)'**에 초점을 맞춥니다. 데이터의 선명도(품질)를 뜻합니다.
+
+> **💡 데이터 분석 관점에서의 연결고리**
+> 데이터에 **노이즈**가 많으면, 그 데이터를 바탕으로 예측하거나 측정했을 때 당연히 **오차**도 커지게 됩니다. 즉, 노이즈는 오차를 발생시키는 주요 원인 중 하나입니다.
