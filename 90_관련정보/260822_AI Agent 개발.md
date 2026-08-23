@@ -68,3 +68,19 @@ VLA 구성 시 하드웨어 제어뿐만 아니라 '상황 인지 루프'가 결
 [13] [https://www.youtube.com](https://www.youtube.com/watch?v=sx2ytqe3hcI)
 
 </details>
+<br>
+<details>
+<summary>
+파이썬으로 AI Agent 만들기 (프레임워크 X)</summary>
+<br>
+https://youtu.be/3wk45Ow3m3M  
+
+https://github.com/dabidstudio/python-ai-agents
+
+1. 프롬프트 체이닝
+2. 라우팅
+3. 병렬처리
+4. 오케스트레이터-워커
+5. 평가-최적화
+
+</details>
